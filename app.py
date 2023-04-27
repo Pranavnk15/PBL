@@ -24,7 +24,7 @@ def import_n_pred(image_path, model):
 
 
 import openai
-openai.api_key = "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"
+openai.api_key = ""
 
 def get_care_recommendations(plant_name):
     prompt = f"What are the care recommendations in 200 words for {plant_name} plants? consider the points like watering, sunlight, season, and this plant is from india"
