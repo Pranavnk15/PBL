@@ -5,26 +5,50 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image, ImageOps
 from flask import Flask, request, jsonify
+import os
+from dotenv import load_dotenv
+from os import environ 
+
+OPENAI_API_KEY = environ.get('OPENAI_API_KEY')
+
+
+load_dotenv()  
 
 
 app = Flask(__name__)
-dic = {0: 'aloevera' , 1: 'bamboo', 2: 'hibiscous', 3: 'rose', 4: 'sugarcane'}
+
+dic = {0: 'Aloevera', 1: 'Hibiscous', 2: 'Rose', 3: 'Sugarcane'}
+
 model = tf.keras.models.load_model("mehul-pbl-plant.h5")
 
-
 def import_n_pred(image_path, model):
-    size = (128, 128)
-    image = Image.open(image_path)
-    image = ImageOps.fit(image, size, Image.ANTIALIAS)
-    img = np.asarray(image)
-    reshape = img[np.newaxis,...]
-    pred = model.predict(reshape)
-    max_index = np.argmax(pred)
-    return dic[max_index]
+    
+	size = (64, 64)
+    
+	image = Image.open(image_path)
+    
+	image = ImageOps.fit(image, size, Image.ANTIALIAS)
+    
+	img = np.asarray(image)
+    
+	img = img / 255.0  
+	# Normalize the image data
+    
+	reshape = img[np.newaxis, ...]
 
+    	pred = model.predict(reshape)
+
+    	max_index = np.argmax(pred)
+
+    	return dic[max_index]
 
 import openai
-openai.api_key = ""
+
+# Get the API key from the environment variable
+api_key = os.environ["OPENAI_API_KEY"]
+
+# Set the API key in the OpenAI client
+openai.api_key = api_key
 
 def get_care_recommendations(plant_name):
     prompt = f"What are the care recommendations in 200 words for {plant_name} plants? consider the points like watering, sunlight, season, and this plant is from india"
